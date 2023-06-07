@@ -19,6 +19,17 @@ function App() {
       <div className="">
         <button type="button" className=""></button>
       </div>
+      <h2>{} tasks remaining</h2>
+      <ul role="list" className="todo-list heading" aria-labelledby="heading-list">
+        <li className="">
+          <div className="cb">
+            <input id="todo-0" type="checkbox" defaultChecked={true} />
+            <label className="todo-label" htmlFor="todo-0">
+              Eat 
+            </label>
+          </div>
+        </li>
+      </ul>
     </div>
   );
 
