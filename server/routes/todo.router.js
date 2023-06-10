@@ -5,7 +5,7 @@ const pool = require('../modules/pool.js');
 // GET
 router.get('/', (req, res) => {
     console.log("In GET request");
-    let query = 'SELECT * FROM "toDoApp";';
+    let query = 'SELECT * FROM "tasks";';
 
     pool.query(query).then((result) => {
         res.send(result.rows);
@@ -16,13 +16,14 @@ router.get('/', (req, res) => {
 });
 // POST
 router.post('/', (req, res) => {
-    const {task, taskCompleted} = req.body;
+    const {task, status} = req.body;
     console.log(req.body);
+    let newTask = req.body;
     const query = `
-    INSERT INTO "toDoApp" ("task", "taskCompleted")
-    VALUES ($1, $2);
+    INSERT INTO "tasks" ("task", "status", "details")
+    VALUES ($1, $2, $3);
     `;
-    pool.query(query, [task, taskCompleted])
+    pool.query(query, [newTask.task, newTask.status, newTask.Details])
     .then((result) => {
         res.sendStatus(201);
     })
@@ -32,7 +33,34 @@ router.post('/', (req, res) => {
     })
 })
 // PUT
+router.put('/:id', (req, res) => {
+    let taskId = req.params.id;
+    console.log(req.body.details);
+    let sqlText = '';
+    sqlText = `UPDATE "tasks" SET "details" = '${details}' WHERE id = '${taskId}';`;
 
+    pool.query(sqlText)
+    .then((result) => {
+        res.send(result.rows);
+    })
+    .catch((error) => {
+        console.log(error);
+        res.sendStatus(500);
+    });
+});
 // DELETE
-
+router.delete('/:id', (req, res) => {
+    let deleteTask = req.params.id;
+    console.log('Delete task', deleteTask);
+    let sqlText = `DELETE FROM "tasks" WHERE id=${deleteTask}`;
+    pool.query(sqlText)
+    .then((result) => {
+        console.log('Task deleted');
+        res.sendStatus(200);
+    })
+    .catch((error) => {
+        console.log(`Error with DELETE request ${sqlText}`, error);
+        res.sendStatus(500);
+    })
+})
 module.exports = router;
