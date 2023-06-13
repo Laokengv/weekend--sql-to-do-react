@@ -1,8 +1,8 @@
 CREATE TABLE tasks (
   "id" serial primary key,
   "task" varchar(50) not null,
-  "status" bool,
-  "details" varchar(240) not null
+  "details" varchar(240),
+  "status" boolean not null
   );
 
 INSERT INTO "tasks" ("task", "status", "details")

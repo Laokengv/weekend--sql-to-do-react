@@ -18,13 +18,13 @@ router.get('/', (req, res) => {
 });
 // POST
 router.post('/', (req, res) => {
-    const {task, status} = req.body;
+    const {task, details, status} = req.body;
     console.log(req.body);
     const query = `
     INSERT INTO "tasks" ("task", "details", "status")
-    VALUES ($1, $3, false);
+    VALUES ($1, $2, $3);
     `;
-    pool.query(query, [task, status, details])
+    pool.query(query, [task, details, status])
     .then(() => {
         res.sendStatus(201);
     })
@@ -36,13 +36,12 @@ router.post('/', (req, res) => {
 // PUT
 router.put('/:id', (req, res) => {
     let taskId = req.params.id;
-    let { task, status, details } = req.body; 
     let sqlText = '';
     sqlText = `UPDATE "tasks" 
-    SET "task" = $1, "status" = $2, details = $3
-    WHERE id = $4;`;
+    SET "status" = true
+    WHERE id = $1;`;
 
-    pool.query(sqlText, [task, status, details, taskId])
+    pool.query(sqlText, [taskId])
     .then(() => {
         res.sendStatus(201);
     })

@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+
 import './App.css';
 
 function App() {
@@ -13,19 +14,19 @@ function App() {
     // on load call getTask function
     console.log('Fetching task')
     getTask().then((tasks) => {
-      setTaskTask(tasks);
       setTaskList(tasks);
     });
   }, []); {/* end useEffect() */}
 
   const toDoSubmit = (event) => {
     event.preventDefault();
-    setTaskTask('');
-    setTaskStatus('');
-    setTaskDetails('');
+   
 
     addTask({ task: task, status: status, details: details }).then(() => {
       getTask().then(setTaskList)
+      setTask('');
+      setStatus('');
+      setDetails('');
     });
   };
 
@@ -39,10 +40,10 @@ function App() {
   } /* end GET function */
 
 /* start POST function */
-const addTask = (task) => {
+const addTask = (taskToAdd) => {
   return fetch('/todo', {
     method: 'POST',
-    body: JSON.stringify(task),
+    body: JSON.stringify(taskToAdd),
     headers: { "Content-Type": "application/json" }
   })
   .then((response) => {
@@ -54,6 +55,21 @@ const addTask = (task) => {
     console.log(error);
   });
 } /* end POST function */
+
+/* start PUT function */
+const completeTask = (id) => {
+  return fetch(`/todo/${id}`, {
+    method: 'PUT',
+    headers: { "Content-Type": "application/json" }
+  })
+  .then((response) => {
+    console.log(response);
+    getTask().then(tasks => {
+      console.log(tasks)
+      setTaskList(tasks)
+    });
+  })
+} /* end PUT function */
 
 /* start DELETE function */
 const deleteTask = (id) => {
@@ -88,13 +104,14 @@ const deleteTask = (id) => {
         <h1>TO DO APP</h1>
       </div>
       <section className="new-task-section">
-        <form onSubmit={toDoSubmit}></form>
+        <form onSubmit={toDoSubmit}>
         <input type="text" placeholder="Task" value={task} onChange={updateTask} />
         <label htmlFor="status-label">Status</label>
-        <input type="text" placeholder="status" value={taskStatus} onChange={updateStatus} />
+        <input type="text" placeholder="status" value={status} onChange={updateStatus} />
         <label htmlFor="details-label">Details</label>
-        <input type="text" placeholder="Details" value={taskDetails} onChange={updateDetails} />
+        <input type="text" placeholder="Details" value={details} onChange={updateDetails} />
         <button type="submit">Add New Task</button>
+        </form>
       </section>
       <ul>
         {taskList.map((task, i) => {
@@ -104,9 +121,9 @@ const deleteTask = (id) => {
               {i+1}
             {task.status ? <span className="taskComplete">COMPLETE</span> : <span className="taskIncomplete">INCOMPLETE</span>} {' '}
             {task.id} {task.task} {task.status} {task.details} 
-            <button type="button" onClick={() => modifyTask(task.id)}>Edit</button>
+            {/* <button type="button" onClick={() => modifyTask(task.id)}>Edit</button> */}
             <button type="button" onClick={() => deleteTask(task.id)}>Delete</button>
-            <button>Complete Task</button> 
+            <button type="button" onClick={() => completeTask(task.id)}>Complete Task</button> 
             </li>
           )
         })}
