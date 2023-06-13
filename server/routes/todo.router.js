@@ -5,11 +5,14 @@ const pool = require('../modules/pool.js');
 // GET
 router.get('/', (req, res) => {
     console.log("In GET request");
-    let query = 'SELECT * FROM "tasks";';
+    let query = `
+    SELECT * FROM "tasks"
+    ORDER BY id;
+    `;
 
-    pool.query(query).then((result) => {
-        res.send(result.rows);
-    }) .catch((error) => {
+    pool.query(query)
+    .then((result) => res.send(result.rows))
+    .catch((error) => {
         console.log(error);
         res.sendStatus(500);
     })
@@ -18,13 +21,12 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
     const {task, status} = req.body;
     console.log(req.body);
-    let newTask = req.body;
     const query = `
-    INSERT INTO "tasks" ("task", "status", "details")
-    VALUES ($1, $2, $3);
+    INSERT INTO "tasks" ("task", "details", "status")
+    VALUES ($1, $3, false);
     `;
-    pool.query(query, [newTask.task, newTask.status, newTask.Details])
-    .then((result) => {
+    pool.query(query, [task, status, details])
+    .then(() => {
         res.sendStatus(201);
     })
     .catch((error) => {
@@ -35,13 +37,15 @@ router.post('/', (req, res) => {
 // PUT
 router.put('/:id', (req, res) => {
     let taskId = req.params.id;
-    console.log(req.body.details);
+    let { task, status, details } = req.body; 
     let sqlText = '';
-    sqlText = `UPDATE "tasks" SET "details" = '${details}' WHERE id = '${taskId}';`;
+    sqlText = `UPDATE "tasks" 
+    SET "task" = $1, "status" = $2, details = $3
+    WHERE id = $4;`;
 
-    pool.query(sqlText)
-    .then((result) => {
-        res.send(result.rows);
+    pool.query(sqlText, [task, status, details, taskId])
+    .then(() => {
+        res.sendStatus(201);
     })
     .catch((error) => {
         console.log(error);
@@ -54,7 +58,7 @@ router.delete('/:id', (req, res) => {
     console.log('Delete task', deleteTask);
     let sqlText = `DELETE FROM "tasks" WHERE id=${deleteTask}`;
     pool.query(sqlText)
-    .then((result) => {
+    .then(() => {
         console.log('Task deleted');
         res.sendStatus(200);
     })

@@ -2,18 +2,18 @@
 import { useState, useEffect } from 'react';
 
 
-{/* start GET function */}
-function getTask() {
-  return fetch('/toDoApp')
+/* start GET function */
+const getTask= () => {
+  return fetch('/tasks')
   .then((response) => response.json())
   .catch((error) => {
     console.log(error);
   });
-} {/* end GET function */}
+} /* end GET function */
 
-{/* start POST function */}
-function addTask(task) {
-  return fetch('/toDoApp', {
+/* start POST function */
+const addTask = (task) => {
+  return fetch('/tasks', {
     method: 'POST',
     body: JSON.stringify(task),
     headers: { "Content-Type": "application/json" }
@@ -26,11 +26,11 @@ function addTask(task) {
   .catch((error) => {
     console.log(error);
   });
-} {/* end POST function */}
+} /* end POST function */
 
-{/* start DELETE function */}
-function deleteTask(id) {
-  return fetch(`/todo/${id}`, {
+/* start DELETE function */
+const deleteTask = (id) => {
+  return fetch(`/tasks/${id}`, {
     method: 'DELETE'
   }) .then((response) => {
     console.log(response);
@@ -41,7 +41,7 @@ function deleteTask(id) {
   }) .catch((error) => {
     console.log(error);
   })
-} {/* end DELETE function */}
+} /* end DELETE function */
 
 
 function App() {
@@ -56,33 +56,33 @@ function App() {
     // on load call getTask function
     console.log('Fetching task')
     getTask().then((tasks) => {
-      setToDoAppTask(tasks);
+      setTaskTask(tasks);
       setTaskList(tasks);
     });
   }, []); {/* end useEffect() */}
 
-  const toDoSubmit = (event) => {
-    event.preventDefault();
-    setTaskTask('');
-    setTaskStatus('');
-    setTaskDetails('');
+  // const toDoSubmit = (event) => {
+  //   event.preventDefault();
+  //   setTaskTask('');
+  //   setTaskStatus('');
+  //   setTaskDetails('');
 
-    addTask({ taskTask: taskTask, taskStatus: taskStatus, taskDetails: taskDetails }).then(() => {
-      getTask().then(setTaskList)
-    });
-  };
+  //   addTask({ taskTask: taskTask, taskStatus: taskStatus, taskDetails: taskDetails }).then(() => {
+  //     getTask().then(setTaskList)
+  //   });
+  // };
 
-  const updateTask = (event) => {
-    setTaskTask(event.target.value);
-  };
+  // const updateTask = (event) => {
+  //   setTaskTask(event.target.value);
+  // };
 
-  const updateTaskStatus = (event) => {
-    setTaskStatus(event.target.value);
-  };
+  // const updateTaskStatus = (event) => {
+  //   setTaskStatus(event.target.value);
+  // };
 
-  const updateTaskDetails = (event) => {
-    setTaskDetails(event.target.value);
-  };
+  // const updateTaskDetails = (event) => {
+  //   setTaskDetails(event.target.value);
+  // };
 
   return (
     <div>
@@ -91,13 +91,28 @@ function App() {
       </div>
       <section className="new-task-section">
         <form onSubmit={toDoSubmit}></form>
-        <input type="text" placeholder="task" value={taskTask} onChange={updateTask} />
+        <input type="text" placeholder="Task" value={taskTask} onChange={updateTask} />
         <label htmlFor="status-label">Status</label>
         <input type="text" placeholder="status" value={taskStatus} onChange={updateTaskStatus} />
         <label htmlFor="details-label">Details</label>
-        <input type="text" placeholder="details" value={taskDetails} onChange={updateTaskDetails} />
+        <input type="text" placeholder="Details" value={taskDetails} onChange={updateTaskDetails} />
         <button type="submit">Add New Task</button>
       </section>
+      <ul>
+        {taskList.map((task, i) => {
+          return (
+          
+            <li className={task.status ? "complete" : "incomplete"} key={task.id}>
+              {i+1}
+            {task.status ? <span className="taskComplete">COMPLETE</span> : <span className="taskIncomplete">INCOMPLETE</span>} {' '}
+            {task.id} {task.task} {task.status} {task.details} 
+            <button type="button" onClick={() => modifyTask(task.id)}>Edit</button>
+            <button type="button" onClick={() => deleteTask(task.id)}>Delete</button>
+            <button>Mark as complete</button> 
+            </li>
+          )
+        })}
+      </ul>
       
     </div>
   );
