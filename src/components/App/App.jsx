@@ -2,15 +2,6 @@
 import { useState, useEffect } from 'react';
 
 
-/* start GET function */
-const getTask= () => {
-  return fetch('/tasks')
-  .then((response) => response.json())
-  .catch((error) => {
-    console.log(error);
-  });
-} /* end GET function */
-
 /* start POST function */
 const addTask = (task) => {
   return fetch('/tasks', {
@@ -46,10 +37,20 @@ const deleteTask = (id) => {
 
 function App() {
 
-  const [taskList, setTaskList] = useState([]);
-  const [taskTask, setTaskTask] = useState("");
-  const [taskStatus, setTaskStatus] = useState(false);
-  const [taskDetails, setTaskDetails] = useState("");
+  /* start GET function */
+const getTask= () => {
+  return fetch('/tasks')
+  .then((response) => response.json())
+  .catch((error) => {
+    console.log(error);
+  });
+} /* end GET function */
+
+
+  // const [taskList, setTaskList] = useState([]);
+  // const [taskTask, setTaskTask] = useState("");
+  // const [taskStatus, setTaskStatus] = useState(false);
+  // const [taskDetails, setTaskDetails] = useState("");
 
   {/* start useEffect() */}
   useEffect(() => {
@@ -89,7 +90,7 @@ function App() {
       <div>
         <h1>TO DO APP</h1>
       </div>
-      <section className="new-task-section">
+      {/* <section className="new-task-section">
         <form onSubmit={toDoSubmit}></form>
         <input type="text" placeholder="Task" value={taskTask} onChange={updateTask} />
         <label htmlFor="status-label">Status</label>
@@ -97,7 +98,7 @@ function App() {
         <label htmlFor="details-label">Details</label>
         <input type="text" placeholder="Details" value={taskDetails} onChange={updateTaskDetails} />
         <button type="submit">Add New Task</button>
-      </section>
+      </section> */}
       <ul>
         {taskList.map((task, i) => {
           return (
@@ -119,4 +120,4 @@ function App() {
 
 }
 
-export default App
+export default App;
